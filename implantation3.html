@@ -17,12 +17,6 @@
       padding: 0;
     }
 
-    /* body {
-    overflow-y: auto; 
-    min-height: 100vh;
-    max-height: 100vh;
-    } */
-
     @font-face {
         font-family: haasr;
         src: url(imgs_assets/AlteHaasGroteskRegular.ttf);
@@ -195,160 +189,168 @@
 
   <div id="hair-container"></div>
 
-  <script>
-    let decayMask;
-    let hairPath = [];
-    let decayStarted = false;
-    let lastDecayTime = 0;
-    let decayQueue = [];
-    const decayInterval = 100;
-    const MAX_DECAY_POINTS = 5000;
-  
-    let decayPixels;
-    let decayPixelsWidth, decayPixelsHeight;
-  
-    let scrollCheckPending = false;
-  
-    let sketch = new p5((p) => {
-      p.setup = () => {
-        p.createCanvas(window.innerWidth, window.innerHeight).parent('hair-container');
-        p.background(255);
-  
-        decayMask = p.createGraphics(p.width, p.height);
-        decayMask.clear();
-  
-        decayPixelsWidth = p.width;
-        decayPixelsHeight = p.height;
-        decayPixels = new Array(p.width * p.height).fill(false);
-  
-        // Generate noisy hair path (right side, horizontal flow with subtle vertical noise)
-        let xStart = p.width * 0.75;
-        let xEnd = p.width + 100;
-        let yMid = p.height / 2;
-        let steps = 500;
-        let noiseSeedY = p.random(1000);
-        hairPath = [];
-        for (let i = 0; i < steps; i++) {
-          let x = p.lerp(xStart, xEnd, i / steps);
-          let noiseOffset = p.map(p.noise(noiseSeedY + i * 0.01), 0, 1, -3, 3);
-          let y = yMid + noiseOffset;
-          hairPath.push(p.createVector(x, y));
-        }
-  
-        window.addEventListener('scroll', () => {
-          if (scrollCheckPending || decayStarted) return;
-  
-          scrollCheckPending = true;
-          requestAnimationFrame(() => {
-            scrollCheckPending = false;
-  
-            const rect = document.getElementById('hair-container').getBoundingClientRect();
-  
-            if (rect.top < window.innerHeight && rect.bottom > 0 && !decayStarted) {
-              decayStarted = true;
-              console.log('Decay started (init phase)...');
-  
-              document.getElementById('hair-container').scrollIntoView({ behavior: 'smooth' });
-  
+ <script>
+  let decayMask;
+  let hairPath = [];
+  let decayStarted = false;
+  let lastDecayTime = 0;
+  let decayQueue = [];
+  const decayInterval = 100;
+  const MAX_DECAY_POINTS = 1000;
+  const MAX_QUEUE_PROCESS = 100; // limit how many points to process per frame
+
+  let decayPixels;
+  let decayPixelsWidth, decayPixelsHeight;
+
+  let scrollCheckPending = false;
+
+  let sketch = new p5((p) => {
+    p.setup = () => {
+      p.createCanvas(window.innerWidth, window.innerHeight).parent('hair-container');
+      p.background(255);
+
+      decayMask = p.createGraphics(p.width, p.height);
+      decayMask.clear();
+
+      decayPixelsWidth = p.width;
+      decayPixelsHeight = p.height;
+      decayPixels = new Array(p.width * p.height).fill(false);
+
+      // Generate noisy hair path
+      let xStart = p.width * 0.75;
+      let xEnd = p.width + 100;
+      let yMid = p.height / 2;
+      let steps = 300; // reduced from 500
+      let noiseSeedY = p.random(1000);
+      hairPath = [];
+      for (let i = 0; i < steps; i++) {
+        let x = p.lerp(xStart, xEnd, i / steps);
+        let noiseOffset = p.map(p.noise(noiseSeedY + i * 0.01), 0, 1, -3, 3);
+        let y = yMid + noiseOffset;
+        hairPath.push(p.createVector(x, y));
+      }
+
+      window.addEventListener('scroll', () => {
+        if (scrollCheckPending || decayStarted) return;
+        scrollCheckPending = true;
+
+        requestAnimationFrame(() => {
+          scrollCheckPending = false;
+
+          const rect = document.getElementById('hair-container').getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0 && !decayStarted) {
+            decayStarted = true;
+            console.log('Decay started (init phase)...');
+
+            document.getElementById('hair-container').scrollIntoView({ behavior: 'smooth' });
+
+            setTimeout(() => {
+              document.body.style.overflow = 'hidden';
+              console.log('Scroll locked.');
+
               setTimeout(() => {
-                document.body.style.overflow = 'hidden';
-                console.log('Scroll locked.');
-  
+                console.log('Decay effect begins.');
+                decayQueue.push(hairPath[0].copy());
+                markDecayed(hairPath[0].x, hairPath[0].y);
+
                 setTimeout(() => {
-                  console.log('Decay effect begins.');
-                  decayQueue.push(hairPath[0].copy());
-                  markDecayed(hairPath[0].x, hairPath[0].y);
-  
-                  setTimeout(() => {
-                    window.location.href = 'preg1.html'; 
-                  }, 10000);
-  
-                }, 4000);
-              }, 500);
-            }
-          });
+                  window.location.href = 'preg1.html';
+                }, 10000);
+
+              }, 4000);
+            }, 500);
+          }
         });
-      };
-  
-      p.draw = () => {
-        p.background(255);
-  
-        p.stroke(0);
-        p.strokeWeight(0.5);
-        p.noFill();
-        p.beginShape();
-        for (let v of hairPath) {
-          p.vertex(v.x, v.y);
-        }
-        p.endShape();
-  
-        p.image(decayMask, 0, 0);
-  
-        if (decayStarted && p.millis() - lastDecayTime > decayInterval && decayQueue.length > 0) {
-          lastDecayTime = p.millis();
-          spreadDecay(p);
-        }
-      };
-  
-      function spreadDecay(p) {
-        let newDecay = [];
-  
-        for (let v of decayQueue) {
-          decayMask.noStroke();
-          decayMask.fill(0, 80);
-          decayMask.ellipse(v.x, v.y, 10, 10);
-  
-          for (let i = 0; i < 8; i++) {
-            let angle = p.random(p.TWO_PI);
-            let radius = p.random(5, 15);
-            let nx = v.x + p.cos(angle) * radius;
-            let ny = v.y + p.sin(angle) * radius;
-  
-            if (nx > 0 && nx < p.width && ny > 0 && ny < p.height) {
-              let idx = Math.floor(nx) + Math.floor(ny) * p.width;
-              if (!decayPixels[idx]) {
-                newDecay.push(p.createVector(nx, ny));
-                markDecayed(nx, ny);
-                if (newDecay.length >= MAX_DECAY_POINTS) break;
-              }
+      });
+    };
+
+    p.draw = () => {
+      p.background(255);
+      p.stroke(0);
+      p.strokeWeight(0.5);
+      p.noFill();
+      p.beginShape();
+      for (let v of hairPath) {
+        p.vertex(v.x, v.y);
+      }
+      p.endShape();
+
+      p.image(decayMask, 0, 0);
+
+      if (decayStarted && p.millis() - lastDecayTime > decayInterval && decayQueue.length > 0) {
+        lastDecayTime = p.millis();
+        spreadDecay(p);
+      }
+    };
+
+    function spreadDecay(p) {
+      let newDecay = [];
+      let processed = 0;
+
+      for (let i = 0; i < decayQueue.length && processed < MAX_QUEUE_PROCESS; i++) {
+        let v = decayQueue[i];
+        processed++;
+
+        decayMask.noStroke();
+        decayMask.fill(0, 80);
+        decayMask.ellipse(v.x, v.y, 10, 10);
+
+        for (let j = 0; j < 8; j++) {
+          let angle = p.random(p.TWO_PI);
+          let radius = p.random(5, 15);
+          let nx = v.x + p.cos(angle) * radius;
+          let ny = v.y + p.sin(angle) * radius;
+
+          if (nx > 0 && nx < p.width && ny > 0 && ny < p.height) {
+            let idx = Math.floor(nx) + Math.floor(ny) * p.width;
+            if (!decayPixels[idx]) {
+              newDecay.push(p.createVector(nx, ny));
+              markDecayed(nx, ny);
+              if (newDecay.length >= MAX_DECAY_POINTS) break;
             }
           }
-          if (newDecay.length >= MAX_DECAY_POINTS) break;
-        }
-  
-        decayQueue = newDecay.length > 0 ? newDecay : [];
-      }
-  
-      function markDecayed(x, y) {
-        let xi = Math.floor(x);
-        let yi = Math.floor(y);
-        if (xi >= 0 && xi < decayPixelsWidth && yi >= 0 && yi < decayPixelsHeight) {
-          decayPixels[xi + yi * decayPixelsWidth] = true;
         }
       }
-  
-      p.windowResized = () => {
-        p.resizeCanvas(window.innerWidth, window.innerHeight);
-        let saved = decayMask.get();
-        decayMask.resizeCanvas(p.width, p.height);
-        decayMask.clear();
-        decayMask.image(saved, 0, 0, p.width, p.height);
-  
-        let oldW = decayPixelsWidth, oldH = decayPixelsHeight, oldPixels = decayPixels;
-        decayPixelsWidth = p.width;
-        decayPixelsHeight = p.height;
-        decayPixels = new Array(p.width * p.height).fill(false);
-  
-        for (let y = 0; y < p.height; y++) {
-          let oldY = Math.floor(y * oldH / p.height);
-          for (let x = 0; x < p.width; x++) {
-            let oldX = Math.floor(x * oldW / p.width);
-            decayPixels[x + y * p.width] = oldPixels[oldX + oldY * oldW] || false;
-          }
+
+      decayQueue = newDecay.length > 0 ? newDecay : [];
+    }
+
+    function markDecayed(x, y) {
+      let xi = Math.floor(x);
+      let yi = Math.floor(y);
+      if (xi >= 0 && xi < decayPixelsWidth && yi >= 0 && yi < decayPixelsHeight) {
+        decayPixels[xi + yi * decayPixelsWidth] = true;
+      }
+    }
+
+    p.windowResized = () => {
+      p.resizeCanvas(window.innerWidth, window.innerHeight);
+      let saved = decayMask.get();
+      decayMask.resizeCanvas(p.width, p.height);
+      decayMask.clear();
+      decayMask.image(saved, 0, 0, p.width, p.height);
+
+      let oldW = decayPixelsWidth, oldH = decayPixelsHeight, oldPixels = decayPixels;
+      decayPixelsWidth = p.width;
+      decayPixelsHeight = p.height;
+      decayPixels = new Array(p.width * p.height).fill(false);
+
+      for (let y = 0; y < p.height; y++) {
+        let oldY = Math.floor(y * oldH / p.height);
+        for (let x = 0; x < p.width; x++) {
+          let oldX = Math.floor(x * oldW / p.width);
+          decayPixels[x + y * p.width] = oldPixels[oldX + oldY * oldW] || false;
         }
-      };
-    });
-  </script>
+      }
+    };
+  });
+
+  // Optional: catch unexpected JS errors
+  window.onerror = function(message, source, lineno, colno, error) {
+    console.error("Error:", message, "at", lineno + ":" + colno);
+  };
+</script>
+
   
 </body>
 </html>

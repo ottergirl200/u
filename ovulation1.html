@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>what do you like?</title>
+    <link rel="icon" type="image/x-icon" href="imgs_assets/spiral.png">
+
+    <style>
+
+        @font-face {
+            font-family: haasr;
+            src: url(imgs_assets/AlteHaasGroteskRegular.ttf);
+        }
+
+        @font-face {
+            font-family: haasb;
+            src: url(imgs_assets/AlteHaasGroteskBold.ttf);
+        }
+
+        h1 {
+            font-size: xx-large;
+            font-family: haasb;
+            /* padding-top: 40%; */
+            text-align: center;
+            margin: 0;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .fade-in {
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 5s;
+            text-align: center;
+            padding-top: 10vh;
+            color: black;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .buttonWall {
+            gap: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr); /* 12 columns */
+            grid-template-rows: repeat(12, 1fr);
+            }
+
+        .buttonWall button {
+            /* padding: 1.5rem;
+            font-size: 1.2rem; */
+            /* background: #333; */
+            /* color: #fff; */
+            border: none;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.05);
+            /* border-radius: 8px; */
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .buttonWall button:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        iframe {
+            /* padding-top: 100%; */
+            position: relative;
+            z-index: 10;
+            border: none;
+            width: 85%;
+            height: 750px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .floating-text-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* So buttons beneath are still clickable */
+            z-index: 2; /* Above the buttons but below the iframe and heading */
+        }
+
+        .floating-text {
+            position: absolute;
+            font-family: haasr;
+            font-size: 1.5rem;
+            color: rgba(0, 0, 0, 0.7);
+            /* animation: float 10s infinite ease-in-out; */
+            transition: transform 0.2s ease-out;
+            white-space: nowrap;
+        }
+
+        /* @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        } */
+
+        p {
+            text-align: justify;
+            padding-right: 30%;
+        }
+
+        .floating-button {
+            position: absolute;
+            width: auto; /* you can adjust this */
+            height: auto;
+            font-family: haasr;
+            font-size: 1.5rem;
+            color: black;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 0;
+            cursor: pointer;
+            z-index: 3;
+            pointer-events: auto;
+            transition: background 0.3s ease;
+        }
+
+        .floating-button:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+    </style>
+</head>
+
+<body>
+
+      <div class="floating-text-container">
+        <p class="floating-text" style="top: 10%; left: 20%;">emmanuel macron<br>liverpool parade<br>temu shein busted<br>federal election recount<br>amas 2025<br>australian taxation office<br>taylor swift amas<br>dust storm sydney<br>byd cars australia<br>sam collins</p>
+        <p class="floating-text" style="top: 40%; left: 70%;">jack mccoy<br>cristiano ronaldo<br>timberwolves vs thunder<br>rosehill racecourse sale<br>freddie aguilar<br>lee hanson<br>weather brisbane<br>charlotte walker<br>mi vs pbks<br>lauren ingrid flanigan</p>
+        <p class="floating-text" style="top: 25%; left: 50%;">alan yentob
+            <br>
+            princess ingrid alexandra
+            <br>
+            state of origin 2025 game 1
+            <br>
+            reconciliation week
+            <br>
+            artarmon sydney trains
+            <br>
+            naomi osaka
+            <br>
+            the last of us season 2
+            <br>
+            memorial day
+            <br>
+            al fateh vs al-nassr
+            <br>
+            timberwolves vs oklahoma<br>city thunder match player</p>
+        <p class="floating-text" style="top: 65%; left: 30%;">rick and morty
+            <br>
+            tylenol
+            <br>
+            aboriginal
+            <br>
+            rod stewart
+            <br>
+            chet holmgren
+            <br>
+            healthscope private hospitals
+            <br>
+            janet jackson
+            <br>
+            lamar aaron ahchee
+            <br>
+            brisbane airport
+            <br>
+            alexei popyrin</p>
+        <p class="floating-text" style="top: 80%; left: 10%;">julius randle
+            <br>
+            wwe raw
+            <br>
+            ipl 2025
+            <br>
+            earthquake
+            <br>
+            next movie
+            <br>
+            memorial day 2025
+            <br>
+            fires near me
+            <br>
+            farmer jack farmer wants a wife
+            <br>
+            saudi pro league
+            <br>
+            christie hayes</p>
+
+            <a href="conception2.html" class="floating-button" style="top: 50%; left: 70%;">#whatdoyouenjoy</a>
+            <a href="" class="floating-button" style="top: 5%; left: 60%;">	
+                #ラヴィット
+                <br>
+                #WWERAW
+               <br>
+                #SmackDown</a>
+            <a href="" class="floating-button" style="top: 20%; left: 15%;">#الهلال_القادسيه</a>
+            <a href="" class="floating-button" style="top: 70%; left: 30%;">#PerthSantaFancon<br>#CDTVライブライブ</a>
+
+      </div>
+
+      <!-- <button class="floating-btn" onclick="handleFloatingButtonClick()">✦</button> -->
+
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+    <!-- <div class="fade-in">
+    <h1>what do you enjoy?</h1>
+    </div> -->
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <iframe src="ov1/doomscroll/index.html"></iframe>
+    
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="buttonWall"></div> 
+
+      <script>
+    window.addEventListener("scroll", () => {
+      const scrollY = window.scrollY;
+      const floatTexts = document.querySelectorAll(".floating-text, .floating-button");
+  
+      floatTexts.forEach((el, i) => {
+        const offset = Math.sin((scrollY + i * 100) / 100) * 10;
+        el.style.transform = `translateY(${offset}px)`;
+      });
+    });
+
+     // Button wall random prompts
+     const messages = [
+      "tell me what you like",
+      "what brings you joy?",
+      "do you remember the first time?",
+      "will you stay?",
+      "how do you feel?"
+    ];
+
+    const wall = document.querySelector(".buttonWall");
+
+    for (let i = 0; i < 144; i++) {
+      const btn = document.createElement("button");
+      btn.addEventListener("click", () => {
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        alert(msg);
+      });
+      wall.appendChild(btn);
+    }
+
+    </script>
+
+</body>
+</html>
+
+
+   

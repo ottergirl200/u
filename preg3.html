@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>stay</title>
+  <link rel="icon" type="image/x-icon" href="imgs_assets/blk.png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f9f9f9;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .iframe-container {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 95vh;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .iframe-wrapper {
+      width: 100%;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .floating-button {
+      position: absolute;
+      z-index: 10;
+      padding: 1em 2em;
+      /* background-color: #054d95;
+      color: white; */
+      /* border: none; */
+      /* border-radius: 5px; */
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    #btn1 { top: 80vh; left: 15vw; }
+    #btn2 { top: 20vh; left: 70%; }
+    #btn3 { top: 60vh; left: 50px; }
+    #btn4 { top: 40vh; left: 85%; }
+    #btn5 { top: 10vh; left: 45vw; }
+
+    #freeze-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: all;
+    z-index: 9999;
+    display: none;
+    cursor: none;
+  }
+  </style>
+</head>
+
+<body>
+<div id="freeze-overlay"></div>
+
+  <div class="iframe-container">
+    <div class="iframe-wrapper">
+      <iframe src="preg/speechrec/index.html" allow="microphone"></iframe>
+    </div>
+    <div class="iframe-wrapper">
+      <iframe src="preg/record/index.html" allow="microphone"></iframe>
+    </div>
+
+    <button class="floating-button" id="btn1"></button>
+    <button class="floating-button" id="btn2"></button>
+    <button class="floating-button" id="btn3"></button>
+    <button class="floating-button" id="btn4" onclick="openAll()"></button>
+    <button class="floating-button" id="btn5"></button>
+    </div>
+
+  <!-- <script>
+    function openAll() {
+      const specs = "toolbar=no,scrollbars=no,resizable=yes,width=500,height=400";
+
+      const urls = [
+        { url: "blinds.html", left: 100, top: 100 },
+        { url: "preg4.html", left: 700, top: 100 },
+        { url: "blinds.html", left: 300, top: 400 },
+        { url: "blinds.html", left: 1100, top: 100 },
+        { url: "blinds.html", left: 500, top: 200 },
+        { url: "blinds.html", left: 200, top: 600 },
+        { url: "blinds.html", left: 900, top: 300 },
+        { url: "blinds.html", left: 1300, top: 100 },
+        { url: "blinds.html", left: 600, top: 500 }
+      ];
+
+      urls.forEach(win => {
+        window.open(
+          win.url,
+          "_blank",
+          `${specs},left=${win.left},top=${win.top}`
+        );
+      });
+    }
+  </script> -->
+  <script>
+    function openAll() {
+  const specs = "toolbar=no,scrollbars=no,resizable=yes,width=500,height=400";
+
+  const urls = [
+    { url: "blinds.html", left: 100, top: 100 },
+    { url: "preg4.html", left: 700, top: 100 },
+    { url: "blinds.html", left: 300, top: 400 },
+    { url: "blinds.html", left: 1100, top: 100 },
+    { url: "blinds.html", left: 500, top: 200 },
+    { url: "blinds.html", left: 200, top: 600 },
+    { url: "blinds.html", left: 900, top: 300 },
+    { url: "blinds.html", left: 1300, top: 100 },
+    { url: "blinds.html", left: 600, top: 500 }
+  ];
+
+  urls.forEach(win => {
+    window.open(
+      win.url,
+      "_blank",
+      `${specs},left=${win.left},top=${win.top}`
+    );
+  });
+
+    // Redirect to the desired page after opening windows
+    window.location.href = "error.html"; 
+    }
+
+  </script>
+
+<script>
+    let freeze = false;
+    let overlay;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      noLoop(); // Only draw when freezing
+      overlay = document.getElementById("freeze-overlay");
+
+      setInterval(() => {
+        freeze = true;
+        overlay.style.display = "block";
+        draw(); // show frozen frame
+
+        setTimeout(() => {
+          freeze = false;
+          overlay.style.display = "none";
+          clear(); // remove frozen overlay
+        }, 1000);
+      }, 2000);
+    }
+
+    function draw() {
+      if (freeze) {
+        clear();
+        fill(255, 255, 255, 100);
+        rect(0, 0, width, height);
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+  </script>
+
+
+</body>
+</html>

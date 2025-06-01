@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #freeze-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: all; 
+      z-index: 9999;
+      display: none;
+      cursor: none; 
+    }
+
+    iframe {
+      height: 100vh;
+      width: 100vw;
+      border: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="freeze-overlay"></div>
+
+  <iframe src="preg/wontyoustay/index.html"></iframe>
+
+  <script>
+    let freeze = false;
+    let overlay;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      noLoop(); // Only draw when freezing
+      overlay = document.getElementById("freeze-overlay");
+
+      setInterval(() => {
+        freeze = true;
+        overlay.style.display = "block";
+        draw(); // show frozen frame
+
+        setTimeout(() => {
+          freeze = false;
+          overlay.style.display = "none";
+          clear(); // remove frozen overlay
+        }, 1000);
+      }, 2000);
+    }
+
+    function draw() {
+      if (freeze) {
+        clear();
+        fill(255, 255, 255, 100);
+        rect(0, 0, width, height);
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+  </script>
+
+</body>
+</html>

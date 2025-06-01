@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>stay</title>
+  <link rel="icon" type="image/x-icon" href="imgs_assets/blk.png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+  <style>
+
+    @font-face {
+        font-family: haasb;
+        src: url(imgs_assets/AlteHaasGroteskBold.ttf);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      cursor: progress;
+      /* font-family: sans-serif; */
+      scroll-behavior: smooth;
+      font-family: haasb;
+    }
+
+    .loader-section {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+    }
+
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid rgb(5, 77, 149);
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .canvas-section {
+      height: 100vh;
+      background: #eee;
+      position: relative;
+    }
+
+    canvas {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #snapshot-img {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 160px;
+      height: auto;
+      border: 2px solid rgb(5, 77, 149);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 1;
+    }
+
+    #capture {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1;
+      padding: 10px 20px;
+      background: #054d95;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #demo {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+      z-index: 1;
+      /* font-family: monospace; */
+      font-size: 14px;
+    }
+
+        #freeze-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 9999;
+      cursor: not-allowed;
+    }
+
+    /* Lock scroll on body */
+    body.freeze-scroll {
+      overflow: hidden;
+      touch-action: none; /* for mobile */
+    }
+
+    .freeze-all * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Loader at top -->
+  <div class="loader-section">
+    <div class="loader"></div>
+  </div>
+
+  <div style="height: 100vh;"></div>
+  <div style="height: 100vh;"></div>
+  <div style="height: 100vh;"></div>
+
+  <!-- Main content only appears after scroll -->
+  <div class="canvas-section" id="canvas-container">
+    <button id="capture">do you</button>
+    <img id="snapshot-img" />
+    <div id="demo">trust me?</div>
+  </div>
+
+  <div id="freeze-overlay"></div>
+
+ 
+  <script>
+    let video;
+    let frozen = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      setTimeout(() => {
+        frozen = true;
+
+        if (typeof noLoop === "function") noLoop();
+
+        document.body.style.overflow = "hidden";
+        document.body.style.pointerEvents = "none";
+
+        document.body.classList.add("freeze-all");
+
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.background = "rgba(255, 255, 255, 0.8)";
+        overlay.style.zIndex = "99999";
+        overlay.style.cursor = "not-allowed";
+        document.body.appendChild(overlay);
+
+        window.addEventListener("wheel", e => e.preventDefault(), { passive: false });
+        window.addEventListener("keydown", e => e.preventDefault(), { passive: false });
+        window.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+      }, 18000);
+
+      // p5.js setup
+      window.setup = function () {
+        let canvas = createCanvas(windowWidth, windowHeight);
+        canvas.parent('canvas-container');
+
+        video = createCapture(VIDEO);
+        video.size(640, 480);
+        video.hide();
+
+        document.getElementById("capture").addEventListener("click", () => {
+          if (frozen) return;
+
+          let imgData = canvas.elt.toDataURL("image/png");
+          let imgElement = document.getElementById("snapshot-img");
+          imgElement.src = imgData;
+          imgElement.style.display = "block";
+
+          getLocation();
+        });
+      };
+
+      window.draw = function () {
+        if (!frozen) {
+          background(255);
+          image(video, 0, 0, width, height);
+        }
+      };
+
+      window.windowResized = function () {
+        if (!frozen) resizeCanvas(windowWidth, windowHeight);
+      };
+
+      function getLocation() {
+        const x = document.getElementById("demo");
+        x.innerHTML = "finding you...";
+
+        if (!window.isSecureContext) {
+          x.innerHTML = "⚠️ i can't find you";
+          return;
+        }
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(success, error, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          });
+        } else {
+          x.innerHTML = "so you don't trust me";
+        }
+      }
+
+      function success(position) {
+        const x = document.getElementById("demo");
+        x.innerHTML =
+          "Latitude: " + position.coords.latitude.toFixed(5) +
+          "<br>Longitude: " + position.coords.longitude.toFixed(5);
+
+        // After 5 sec delay: show alert
+        setTimeout(() => {
+          alert("found you. i'll be there soon. on the other side of this screen.");
+
+          // Then after 4 sec: redirect
+          setTimeout(() => {
+            window.location.href = "preg3.html"; // Change as needed
+          }, 3000);
+        }, 5000);
+      }
+
+      function error(err) {
+        const x = document.getElementById("demo");
+        x.innerHTML = "i can't find you (" + err.message + ")";
+      }
+    });
+  </script>
+
+</body>
+</html>

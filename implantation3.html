@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>or do you like to hear yourself?</title>
+    <link rel="icon" type="image/x-icon" href="imgs_assets/spiral.png">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.min.js"></script>
+
+    <style>
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* body {
+    overflow-y: auto; 
+    min-height: 100vh;
+    max-height: 100vh;
+    } */
+
+    @font-face {
+        font-family: haasr;
+        src: url(imgs_assets/AlteHaasGroteskRegular.ttf);
+    }
+
+    @font-face {
+        font-family: haasb;
+        src: url(imgs_assets/AlteHaasGroteskBold.ttf);
+    }
+
+    .iframe-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 48vh); 
+      gap: 10px;
+      padding: 10px;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .iframe-grid iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* .iframe-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      display: block;
+      cursor: pointer;
+    } */
+    .iframe-link {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        display: block;
+        background: transparent;
+        pointer-events: auto;
+        text-decoration: none;
+    }
+
+    .marquee-overlay {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      pointer-events: none; /* allows clicking on iframes below */
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll-left 15s linear infinite;
+      font-size: 5em;
+      font-family: haasr;
+      color: black;
+      padding: 10px 0;
+      pointer-events: none;
+    }
+
+    /* scrolling animation */
+    @keyframes scroll-left {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    #hair-container {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      z-index: 1;
+    }
+
+    </style>
+</head>
+<body>
+    
+    <script>
+         let theAlert, theConfirm, thePrompt;
+    
+    function setup() {
+    createCanvas(windowWidth, windowHeight);
+    //alerts give message, only option ok
+    //saves no useful information
+    alert("Would you do me a favour?")
+    
+    //confirm gives ok/cancel option
+    //returns true or false to program
+    //can save response to variable
+    theConfirm=confirm("Please click on the frame you want to respond to your voice.")
+    //console.log(theConfirm)
+    
+    alert("Thank you.")
+    }
+
+    function draw() {
+    background(255);
+    }
+    </script>
+
+  <div class="iframe-grid">
+
+    <div class="iframe-wrapper">
+        <iframe src="im3/bezier/index.html" allow="microphone"></iframe>
+        <!-- <a href="#" class="iframe-link" id="openSketch"></a> -->
+      </div>
+      
+    <div class="iframe-wrapper">
+      <iframe src="im3/disco/index.html" allow="microphone"></iframe>
+      <!-- <a href="im3/disco/index.html" class="iframe-link" target="_blank"></a> -->
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="im3/flowfield/index.html" allow="microphone"></iframe>
+      <!-- <a href="im3/flowfield/index.html" class="iframe-link" target="_blank"></a> -->
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="im3/amp/index.html" allow="microphone"></iframe>
+      <!-- <a href="im3/amp/index.html" class="iframe-link" target="_blank"></a> -->
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="im3/terrain/index.html" allow="microphone"></iframe>
+      <!-- <a href="im3/terrain/index.html" class="iframe-link" target="_blank"></a> -->
+    </div>
+   
+    <div class="iframe-wrapper">
+      <iframe src="im3/jelly/index.html" allow="microphone"></iframe>
+      <!-- <a href="im3/jelly/index.html" class="iframe-link" target="_blank"></a> -->
+    </div>
+  </div>
+
+  <div class="marquee-overlay">
+    <div class="marquee-text">
+      or do you like to hear yourself?
+    </div>
+  </div>
+
+  <div style="height: 100vh;"></div>
+
+  <div id="hair-container"></div>
+
+  <script>
+    let decayMask;
+    let hairPath = [];
+    let decayStarted = false;
+    let lastDecayTime = 0;
+    let decayQueue = [];
+    const decayInterval = 100;
+    const MAX_DECAY_POINTS = 5000;
+  
+    let decayPixels;
+    let decayPixelsWidth, decayPixelsHeight;
+  
+    let scrollCheckPending = false;
+  
+    let sketch = new p5((p) => {
+      p.setup = () => {
+        p.createCanvas(window.innerWidth, window.innerHeight).parent('hair-container');
+        p.background(255);
+  
+        decayMask = p.createGraphics(p.width, p.height);
+        decayMask.clear();
+  
+        decayPixelsWidth = p.width;
+        decayPixelsHeight = p.height;
+        decayPixels = new Array(p.width * p.height).fill(false);
+  
+        // Generate noisy hair path (right side, horizontal flow with subtle vertical noise)
+        let xStart = p.width * 0.75;
+        let xEnd = p.width + 100;
+        let yMid = p.height / 2;
+        let steps = 500;
+        let noiseSeedY = p.random(1000);
+        hairPath = [];
+        for (let i = 0; i < steps; i++) {
+          let x = p.lerp(xStart, xEnd, i / steps);
+          let noiseOffset = p.map(p.noise(noiseSeedY + i * 0.01), 0, 1, -3, 3);
+          let y = yMid + noiseOffset;
+          hairPath.push(p.createVector(x, y));
+        }
+  
+        window.addEventListener('scroll', () => {
+          if (scrollCheckPending || decayStarted) return;
+  
+          scrollCheckPending = true;
+          requestAnimationFrame(() => {
+            scrollCheckPending = false;
+  
+            const rect = document.getElementById('hair-container').getBoundingClientRect();
+  
+            if (rect.top < window.innerHeight && rect.bottom > 0 && !decayStarted) {
+              decayStarted = true;
+              console.log('Decay started (init phase)...');
+  
+              document.getElementById('hair-container').scrollIntoView({ behavior: 'smooth' });
+  
+              setTimeout(() => {
+                document.body.style.overflow = 'hidden';
+                console.log('Scroll locked.');
+  
+                setTimeout(() => {
+                  console.log('Decay effect begins.');
+                  decayQueue.push(hairPath[0].copy());
+                  markDecayed(hairPath[0].x, hairPath[0].y);
+  
+                  setTimeout(() => {
+                    window.location.href = 'preg1.html'; 
+                  }, 10000);
+  
+                }, 4000);
+              }, 500);
+            }
+          });
+        });
+      };
+  
+      p.draw = () => {
+        p.background(255);
+  
+        p.stroke(0);
+        p.strokeWeight(0.5);
+        p.noFill();
+        p.beginShape();
+        for (let v of hairPath) {
+          p.vertex(v.x, v.y);
+        }
+        p.endShape();
+  
+        p.image(decayMask, 0, 0);
+  
+        if (decayStarted && p.millis() - lastDecayTime > decayInterval && decayQueue.length > 0) {
+          lastDecayTime = p.millis();
+          spreadDecay(p);
+        }
+      };
+  
+      function spreadDecay(p) {
+        let newDecay = [];
+  
+        for (let v of decayQueue) {
+          decayMask.noStroke();
+          decayMask.fill(0, 80);
+          decayMask.ellipse(v.x, v.y, 10, 10);
+  
+          for (let i = 0; i < 8; i++) {
+            let angle = p.random(p.TWO_PI);
+            let radius = p.random(5, 15);
+            let nx = v.x + p.cos(angle) * radius;
+            let ny = v.y + p.sin(angle) * radius;
+  
+            if (nx > 0 && nx < p.width && ny > 0 && ny < p.height) {
+              let idx = Math.floor(nx) + Math.floor(ny) * p.width;
+              if (!decayPixels[idx]) {
+                newDecay.push(p.createVector(nx, ny));
+                markDecayed(nx, ny);
+                if (newDecay.length >= MAX_DECAY_POINTS) break;
+              }
+            }
+          }
+          if (newDecay.length >= MAX_DECAY_POINTS) break;
+        }
+  
+        decayQueue = newDecay.length > 0 ? newDecay : [];
+      }
+  
+      function markDecayed(x, y) {
+        let xi = Math.floor(x);
+        let yi = Math.floor(y);
+        if (xi >= 0 && xi < decayPixelsWidth && yi >= 0 && yi < decayPixelsHeight) {
+          decayPixels[xi + yi * decayPixelsWidth] = true;
+        }
+      }
+  
+      p.windowResized = () => {
+        p.resizeCanvas(window.innerWidth, window.innerHeight);
+        let saved = decayMask.get();
+        decayMask.resizeCanvas(p.width, p.height);
+        decayMask.clear();
+        decayMask.image(saved, 0, 0, p.width, p.height);
+  
+        let oldW = decayPixelsWidth, oldH = decayPixelsHeight, oldPixels = decayPixels;
+        decayPixelsWidth = p.width;
+        decayPixelsHeight = p.height;
+        decayPixels = new Array(p.width * p.height).fill(false);
+  
+        for (let y = 0; y < p.height; y++) {
+          let oldY = Math.floor(y * oldH / p.height);
+          for (let x = 0; x < p.width; x++) {
+            let oldX = Math.floor(x * oldW / p.width);
+            decayPixels[x + y * p.width] = oldPixels[oldX + oldY * oldW] || false;
+          }
+        }
+      };
+    });
+  </script>
+  
+</body>
+</html>

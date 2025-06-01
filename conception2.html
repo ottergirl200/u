@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>do u like to look at yourself?</title>
+    <link rel="icon" type="image/x-icon" href="imgs_assets/spiral.png">
+   
+   <style>
+
+    @font-face {
+        font-family: haasr;
+        src: url(imgs_assets/AlteHaasGroteskRegular.ttf);
+    }
+
+    @font-face {
+        font-family: haasb;
+        src: url(imgs_assets/AlteHaasGroteskBold.ttf);
+    }
+
+    h1 {
+        font-family: haasr;
+        font-size: 5em;
+        z-index: 10;
+        pointer-events: none;  /* doesn't block iframe int. */
+    }
+
+    body {
+      margin: 0;
+      /* padding: 20px; */
+      /* font-family: sans-serif; */
+    }
+
+    .iframe-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 48vh); /* each row 300px tall */
+      gap: 10px;
+      /* padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 20px; */
+      padding: 10px;
+    }
+
+    .iframe-grid iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .iframe-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      display: block;
+      cursor: pointer;
+    }
+
+    .marquee-overlay {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      pointer-events: none; /* allows clicking on iframes below */
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll-left 15s linear infinite;
+      font-size: 5em;
+      font-family: haasr;
+      color: black;
+      padding: 10px 0;
+      pointer-events: none;
+    }
+
+    /* scrolling animation */
+    @keyframes scroll-left {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    </style>
+</head>
+<body>
+
+  <!-- <div class="iframe-grid">
+    <iframe src="ov2/ASCII/index.html"></iframe>
+    <iframe src="ov2/face_track/index.html"></iframe>
+    <iframe src="ov2/facemesh/index.html"></iframe>
+    <iframe src="ov2/halftone/index.html"></iframe>
+    <iframe src="ov2/invertcam/index.html"></iframe>
+    <iframe src="ov2/liptrack/index.html"></iframe>
+    <iframe src="ov2/textrain/index.html"></iframe>
+    <iframe src="ov2/voronoi/index.html"></iframe>
+  </div> -->
+
+  <div class="iframe-grid">
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/invertcam/index.html"></iframe>
+      <a href="ov2/invertcam/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="facetrack.html"></iframe>
+      <a href="facetrack.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/facemesh/index.html"></iframe>
+      <a href="ov2/facemesh/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/halftone/index.html"></iframe>
+      <a href="ov2/halftone/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/ASCII/index.html"></iframe>
+      <a href="ov2/ASCII/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/liptrack/index.html"></iframe>
+      <a href="ov2/liptrack/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+
+    <div class="iframe-wrapper">
+      <iframe src="ov2/textrain/index.html"></iframe>
+      <a href="ov2/textrain/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+   
+    <div class="iframe-wrapper">
+      <iframe src="ov2/voronoi/index.html"></iframe>
+      <a href="ov2/voronoi/index.html" class="iframe-link" target="_blank"></a>
+    </div>
+   
+  </div>
+
+  <div class="marquee-overlay">
+    <div class="marquee-text">
+      do you like to look at yourself?
+    </div>
+  </div>
+
+</body>
+</html>
